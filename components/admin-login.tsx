@@ -110,7 +110,7 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
             </Button>
 
             <div className="text-center">
-              <Link href="/AdminSignup">
+              <Link href="/admin/signup">
                 <Button type="button" variant="ghost" className="text-sm text-muted-foreground hover:text-foreground">
                   <UserPlus size={16} className="mr-2" />
                   Create Admin Account

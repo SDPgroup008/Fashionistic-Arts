@@ -19,7 +19,7 @@ export interface Artwork {
 }
 
 export interface SliderImage {
-  id?: string
+  id: string
   title: string
   artist: string
   medium: string

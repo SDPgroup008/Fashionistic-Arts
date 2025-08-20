@@ -10,7 +10,7 @@ import { LogOut, ImageIcon, Video, ShoppingCart, BarChart3, Home, FileSlidersIco
 import { ArtworkManager } from "@/components/artwork-manager"
 import { ShopManager } from "@/components/shop-manager"
 import { AnalyticsDashboard } from "@/components/analytics-dashboard"
-import { SliderManager } from "@/components"
+import { SliderManager } from "@/components/"
 
 interface AdminDashboardProps {
   onLogout: () => void

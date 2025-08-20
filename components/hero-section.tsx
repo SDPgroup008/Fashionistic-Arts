@@ -3,58 +3,121 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight, Play } from "lucide-react"
+import { getSliderImages } from "@/lib/firebase-service"
+
+interface SliderImage {
+  id: string
+  imageUrl: string
+  title: string
+  artist: string
+  medium: string
+  order: number
+}
 
 const heroArtworks = [
   {
-    id: 1,
-    image: "/placeholder.svg?height=1080&width=1920",
+    id: "default-1",
+    imageUrl: "/placeholder.svg?height=1080&width=1920",
     title: "Golden Depths",
     artist: "Fashionistic Arts",
     medium: "Acrylic on Canvas",
+    order: 1,
   },
   {
-    id: 2,
-    image: "/placeholder.svg?height=1080&width=1920",
+    id: "default-2",
+    imageUrl: "/placeholder.svg?height=1080&width=1920",
     title: "Neon Dreams",
     artist: "Fashionistic Arts",
     medium: "Digital Art",
+    order: 2,
   },
   {
-    id: 3,
-    image: "/placeholder.svg?height=1080&width=1920",
+    id: "default-3",
+    imageUrl: "/placeholder.svg?height=1080&width=1920",
     title: "Midnight Elegance",
     artist: "Fashionistic Arts",
     medium: "Mixed Media",
+    order: 3,
   },
 ]
 
 export function HeroSection() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
+  const [sliderImages, setSliderImages] = useState<SliderImage[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!isAutoPlaying) return
+    const loadSliderImages = async () => {
+      try {
+        const images = await getSliderImages()
+        if (images.length > 0) {
+          setSliderImages(images)
+        } else {
+          // Fallback to default images if none in Firebase
+          setSliderImages(heroArtworks)
+        }
+      } catch (error) {
+        console.error("Error loading slider images:", error)
+        // Use fallback images on error
+        setSliderImages(heroArtworks)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadSliderImages()
+  }, [])
+
+  useEffect(() => {
+    if (!isAutoPlaying || sliderImages.length === 0) return
 
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroArtworks.length)
+      setCurrentSlide((prev) => (prev + 1) % sliderImages.length)
     }, 5000)
 
     return () => clearInterval(interval)
-  }, [isAutoPlaying])
+  }, [isAutoPlaying, sliderImages.length])
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % heroArtworks.length)
+    setCurrentSlide((prev) => (prev + 1) % sliderImages.length)
   }
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + heroArtworks.length) % heroArtworks.length)
+    setCurrentSlide((prev) => (prev - 1 + sliderImages.length) % sliderImages.length)
+  }
+
+  if (loading) {
+    return (
+      <section className="relative h-screen overflow-hidden flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading gallery...</p>
+        </div>
+      </section>
+    )
+  }
+
+  if (sliderImages.length === 0) {
+    return (
+      <section className="relative h-screen overflow-hidden flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-serif font-bold text-foreground mb-4">
+            <span className="bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
+              Fashionistic Arts
+            </span>
+          </h1>
+          <p className="text-xl text-muted-foreground">Where Creativity Meets Vision</p>
+        </div>
+      </section>
+    )
   }
 
   return (
     <section className="relative h-screen overflow-hidden">
       {/* Background Slider */}
       <div className="absolute inset-0">
-        {heroArtworks.map((artwork, index) => (
+        {sliderImages.map((artwork, index) => (
           <div
             key={artwork.id}
             className={`absolute inset-0 transition-opacity duration-1000 ${
@@ -64,7 +127,7 @@ export function HeroSection() {
             <div
               className="w-full h-full bg-cover bg-center parallax"
               style={{
-                backgroundImage: `url(${artwork.image})`,
+                backgroundImage: `url(${artwork.imageUrl})`,
                 transform: `translateY(${index === currentSlide ? 0 : 20}px)`,
               }}
             />
@@ -112,9 +175,9 @@ export function HeroSection() {
             {/* Current Artwork Info */}
             <div className="mt-16 animate-fade-in">
               <div className="bg-card/20 backdrop-blur-sm border border-border/30 rounded-lg p-6 max-w-md">
-                <h3 className="text-xl font-semibold text-foreground mb-2">{heroArtworks[currentSlide].title}</h3>
-                <p className="text-muted-foreground mb-1">by {heroArtworks[currentSlide].artist}</p>
-                <p className="text-sm text-muted-foreground">{heroArtworks[currentSlide].medium}</p>
+                <h3 className="text-xl font-semibold text-foreground mb-2">{sliderImages[currentSlide]?.title}</h3>
+                <p className="text-muted-foreground mb-1">by {sliderImages[currentSlide]?.artist}</p>
+                <p className="text-sm text-muted-foreground">{sliderImages[currentSlide]?.medium}</p>
               </div>
             </div>
           </div>
@@ -153,7 +216,7 @@ export function HeroSection() {
 
       {/* Slide Indicators */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex space-x-2">
-        {heroArtworks.map((_, index) => (
+        {sliderImages.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}

@@ -1,0 +1,35 @@
+// Firestore Security Rules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow read access to all users for the Fashionistic Arts collection
+    match /Fashionistic Arts/{document} {
+      allow read: if true;
+      // Only allow write access to authenticated users (admin)
+      allow write: if request.auth != null;
+    }
+    
+    // Deny access to all other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+// Firebase Storage Security Rules
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Allow read access to all files in Fashionistic Arts folder
+    match /Fashionistic Arts/{allPaths=**} {
+      allow read: if true;
+      // Only allow write/delete access to authenticated users (admin)
+      allow write, delete: if request.auth != null;
+    }
+    
+    // Deny access to all other files
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

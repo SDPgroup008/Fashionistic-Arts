@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { LogOut, ImageIcon, Video, ShoppingCart, BarChart3, Home } from "lucide-react"
+import { LogOut, ImageIcon, Video, ShoppingCart, BarChart3, Home, FileSlidersIcon as Slideshow } from "lucide-react"
 import { ArtworkManager } from "@/components/artwork-manager"
 import { ShopManager } from "@/components/shop-manager"
 import { AnalyticsDashboard } from "@/components/analytics-dashboard"
+import { SliderManager } from "@/components/slider-manager"
 
 interface AdminDashboardProps {
   onLogout: () => void
@@ -109,10 +110,14 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="artworks" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:grid-cols-4">
             <TabsTrigger value="artworks" className="gap-2">
               <ImageIcon size={16} />
               Artworks
+            </TabsTrigger>
+            <TabsTrigger value="slider" className="gap-2">
+              <Slideshow size={16} />
+              Slider
             </TabsTrigger>
             <TabsTrigger value="shop" className="gap-2">
               <ShoppingCart size={16} />
@@ -126,6 +131,10 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
           <TabsContent value="artworks">
             <ArtworkManager uploadLimit={uploadLimit} currentCount={totalArtworks} />
+          </TabsContent>
+
+          <TabsContent value="slider">
+            <SliderManager />
           </TabsContent>
 
           <TabsContent value="shop">

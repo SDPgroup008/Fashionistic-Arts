@@ -3,6 +3,8 @@
 import { useState } from "react"
 import { AdminLogin } from "@/components/admin-login"
 import { AdminDashboard } from "@/components/admin-dashboard"
+import { AdminSignup } from "@/components/admin-signup"
+
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)

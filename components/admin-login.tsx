@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Lock, User, UserPlus } from "lucide-react"
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { auth } from "@/lib/firebase"
+import { AdminSignup } from "@/components/admin-signup"
 import Link from "next/link"
 
 interface AdminLoginProps {
@@ -110,7 +111,7 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
             </Button>
 
             <div className="text-center">
-              <Link href="/admin/signup">
+              <Link href="/AdminSignup">
                 <Button type="button" variant="ghost" className="text-sm text-muted-foreground hover:text-foreground">
                   <UserPlus size={16} className="mr-2" />
                   Create Admin Account

@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Lock, User, UserPlus } from "lucide-react"
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { auth } from "@/lib/firebase"
-import { AdminSignup } from "@/components/admin-signup"
+import { AdminSignup } from "@/components/admin-signup"  
 import Link from "next/link"
 
 interface AdminLoginProps {

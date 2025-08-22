@@ -43,7 +43,7 @@ export function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
           <DialogTitle>{product.title}</DialogTitle>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6">
+        </div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6">
           {/* Image */}
           <div className="relative">
             <img

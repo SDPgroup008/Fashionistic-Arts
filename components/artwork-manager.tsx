@@ -102,9 +102,9 @@ export function ArtworkManager({ uploadLimit, currentCount }: ArtworkManagerProp
           size: formData.size,
           material: formData.material,
           medium: formData.medium,
-          price: formData.price ? Number(formData.price) : null,
+          price: formData.price ? Number(formData.price) : undefined,
           imageUrl: imageUrl || artworks.find((a) => a.id === editingId)?.imageUrl || "",
-          videoUrl: videoUrl || artworks.find((a) => a.id === editingId)?.videoUrl || null,
+          videoUrl: videoUrl || artworks.find((a) => a.id === editingId)?.videoUrl || undefined,
           isForSale: formData.isForSale,
           category: formData.category,
         }
@@ -127,9 +127,9 @@ export function ArtworkManager({ uploadLimit, currentCount }: ArtworkManagerProp
             size: formData.size || "Unknown",
             material: formData.material || "Unknown",
             medium: formData.medium || "Unknown",
-            price: formData.price ? Number(formData.price) : null,
+            price: formData.price ? Number(formData.price) : undefined,
             imageUrl: fileType === "images" ? uploadedUrl : "",
-            videoUrl: fileType === "videos" ? uploadedUrl : null,
+            videoUrl: fileType === "videos" ? uploadedUrl : undefined,
             isForSale: formData.isForSale,
             category: formData.category,
           }

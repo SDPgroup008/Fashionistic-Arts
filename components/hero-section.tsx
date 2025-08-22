@@ -51,7 +51,7 @@ export function HeroSection() {
   useEffect(() => {
     const loadSliderImages = async () => {
       try {
-        console.log("[v0] Loading slider media from /Fashionistic_Arts/slider collection...")
+        console.log("[v0] Loading slider media from Fashionistic_Arts/slider folder...")
         const images = await getAllSliderMedia()
         console.log("[v0] Loaded slider media:", images.length, images)
 
@@ -67,18 +67,65 @@ export function HeroSection() {
             order: img.order,
             createdAt: img.createdAt || new Date(),
             updatedAt: img.updatedAt || new Date(),
+            storageFolder: img.storageFolder,
           }))
           setSliderImages(typedImages)
           console.log("[v0] Set slider images from Firebase:", typedImages)
         } else {
-          // Fallback to default images if none in Firebase
           console.log("[v0] No slider images found in Firebase, using fallback")
-          setSliderImages(heroArtworks)
+          const fallbackImages: SliderImage[] = [
+            {
+              id: "default-1",
+              imageUrl: "/placeholder.svg?height=1080&width=1920",
+              title: "Golden Depths",
+              artist: "Fashionistic Arts",
+              medium: "Acrylic on Canvas",
+              fileType: "image" as const,
+              order: 1,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            },
+            {
+              id: "default-2",
+              imageUrl: "/placeholder.svg?height=1080&width=1920",
+              title: "Neon Dreams",
+              artist: "Fashionistic Arts",
+              medium: "Digital Art",
+              fileType: "image" as const,
+              order: 2,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            },
+            {
+              id: "default-3",
+              imageUrl: "/placeholder.svg?height=1080&width=1920",
+              title: "Midnight Elegance",
+              artist: "Fashionistic Arts",
+              medium: "Mixed Media",
+              fileType: "image" as const,
+              order: 3,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            },
+          ]
+          setSliderImages(fallbackImages)
         }
       } catch (error) {
         console.error("[v0] Error loading slider images:", error)
-        // Use fallback images on error
-        setSliderImages(heroArtworks)
+        const fallbackImages: SliderImage[] = [
+          {
+            id: "default-1",
+            imageUrl: "/placeholder.svg?height=1080&width=1920",
+            title: "Golden Depths",
+            artist: "Fashionistic Arts",
+            medium: "Acrylic on Canvas",
+            fileType: "image" as const,
+            order: 1,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        ]
+        setSliderImages(fallbackImages)
       } finally {
         setLoading(false)
       }

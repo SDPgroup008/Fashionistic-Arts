@@ -65,7 +65,7 @@ export function AnalyticsDashboard() {
             <DollarSign size={16} className="text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">${mockAnalytics.totalRevenue.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-primary">UGX {mockAnalytics.totalRevenue.toLocaleString()}</div>
             <div className="flex items-center gap-1 text-xs text-green-500">
               <TrendingUp size={12} />
               +28% from last month
@@ -111,7 +111,7 @@ export function AnalyticsDashboard() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-primary">${artwork.revenue}</p>
+                    <p className="font-semibold text-primary">UGX {artwork.revenue?.toLocaleString()}</p>
                     <p className="text-sm text-muted-foreground">{artwork.sales} sales</p>
                   </div>
                 </div>
@@ -142,7 +142,9 @@ export function AnalyticsDashboard() {
                     </p>
                     <p className="text-sm text-muted-foreground">{activity.time}</p>
                   </div>
-                  {activity.amount && <p className="font-semibold text-primary">${activity.amount}</p>}
+                  {activity.amount && (
+                    <p className="font-semibold text-primary">UGX {activity.amount.toLocaleString()}</p>
+                  )}
                 </div>
               ))}
             </div>

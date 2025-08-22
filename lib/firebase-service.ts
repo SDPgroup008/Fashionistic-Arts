@@ -40,7 +40,7 @@ export async function uploadFile(file: File, path: string): Promise<string> {
   const storageRef = ref(storage, `${COLLECTION_NAME}/${path}`)
   const snapshot = await uploadBytes(storageRef, file)
   return await getDownloadURL(snapshot.ref)
-}
+}  
 
 // Delete file from Firebase Storage
 export async function deleteFile(url: string): Promise<void> {

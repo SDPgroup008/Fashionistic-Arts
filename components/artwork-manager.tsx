@@ -96,17 +96,26 @@ export function ArtworkManager({ uploadLimit, currentCount }: ArtworkManagerProp
           }
         }
 
-        const artworkData = {
+        const artworkData: any = {
           title: formData.title,
           description: formData.description,
           size: formData.size,
           material: formData.material,
           medium: formData.medium,
-          price: formData.price ? Number(formData.price) : undefined,
           imageUrl: imageUrl || artworks.find((a) => a.id === editingId)?.imageUrl || "",
-          videoUrl: videoUrl || artworks.find((a) => a.id === editingId)?.videoUrl || undefined,
           isForSale: formData.isForSale,
           category: formData.category,
+        }
+
+        // Only include price if it has a value
+        if (formData.price && Number(formData.price) > 0) {
+          artworkData.price = Number(formData.price)
+        }
+
+        // Only include videoUrl if it has a value
+        const existingVideoUrl = artworks.find((a) => a.id === editingId)?.videoUrl
+        if (videoUrl || existingVideoUrl) {
+          artworkData.videoUrl = videoUrl || existingVideoUrl
         }
 
         await updateArtwork(editingId, artworkData)
@@ -121,17 +130,25 @@ export function ArtworkManager({ uploadLimit, currentCount }: ArtworkManagerProp
 
           setUploadProgress((prev) => ({ ...prev, [file.name]: 50 }))
 
-          const artworkData = {
+          const artworkData: any = {
             title: formData.title || `Artwork ${index + 1}`,
             description: formData.description || `Uploaded artwork ${index + 1}`,
             size: formData.size || "Unknown",
             material: formData.material || "Unknown",
             medium: formData.medium || "Unknown",
-            price: formData.price ? Number(formData.price) : undefined,
             imageUrl: fileType === "images" ? uploadedUrl : "",
-            videoUrl: fileType === "videos" ? uploadedUrl : undefined,
             isForSale: formData.isForSale,
             category: formData.category,
+          }
+
+          // Only include price if it has a value
+          if (formData.price && Number(formData.price) > 0) {
+            artworkData.price = Number(formData.price)
+          }
+
+          // Only include videoUrl if it's a video file
+          if (fileType === "videos") {
+            artworkData.videoUrl = uploadedUrl
           }
 
           await addArtwork(artworkData)

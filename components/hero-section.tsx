@@ -57,7 +57,11 @@ export function HeroSection() {
       try {
         const images = await getSliderImages()
         if (images.length > 0) {
-          setSliderImages(images)
+          const typedImages = images.map((img) => ({
+            ...img,
+            fileType: img.fileType as "image" | "video",
+          }))
+          setSliderImages(typedImages)
         } else {
           // Fallback to default images if none in Firebase
           setSliderImages(heroArtworks)

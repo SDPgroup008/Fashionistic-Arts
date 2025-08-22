@@ -32,16 +32,28 @@ export function VideoModal({ video, isOpen, onClose }: VideoModalProps) {
         </DialogHeader>
 
         <div className="space-y-6 p-6">
-          {/* Video Player Placeholder */}
+          {/* Video Player */}
           <div className="relative aspect-video bg-muted rounded-lg overflow-hidden">
-            <img src={video.thumbnail || "/placeholder.svg"} alt={video.title} className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-background/20 flex items-center justify-center">
-              <div className="bg-primary text-primary-foreground rounded-full p-6">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              </div>
-            </div>
+            {video.videoUrl ? (
+              <video src={video.videoUrl} controls className="w-full h-full object-cover" poster={video.thumbnail}>
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <>
+                <img
+                  src={video.thumbnail || "/placeholder.svg"}
+                  alt={video.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-background/20 flex items-center justify-center">
+                  <div className="bg-primary text-primary-foreground rounded-full p-6">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Video Details */}

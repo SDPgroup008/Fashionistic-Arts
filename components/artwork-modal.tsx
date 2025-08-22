@@ -60,7 +60,7 @@ export function ArtworkModal({ artwork, isOpen, onClose }: ArtworkModalProps) {
             <p className="text-foreground leading-relaxed">{artwork.description}</p>
 
             <div className="space-y-4">
-              <div className="text-3xl font-bold text-primary">${artwork.price}</div>
+              <div className="text-3xl font-bold text-primary">UGX {artwork.price?.toLocaleString()}</div>
 
               <div className="flex gap-3">
                 <Button className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90">

@@ -141,6 +141,6 @@ export function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
           </div>
         </DialogContent>
       </Dialog>
-    <></>  
+    </div></>  
   )
 }

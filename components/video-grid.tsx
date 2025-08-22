@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Play, Eye } from "lucide-react"
 import { VideoModal } from "@/components/video-modal"
-import { getAllSliderMedia } from "@/lib/firebase-service"
+import { getVideos } from "@/lib/firebase-service"
 
 export function VideoGrid() {
   const [selectedVideo, setSelectedVideo] = useState<any>(null)
@@ -15,26 +15,25 @@ export function VideoGrid() {
   useEffect(() => {
     const loadVideos = async () => {
       try {
-        const sliderMedia = await getAllSliderMedia()
-        const videoMedia = sliderMedia.filter((media) => media.fileType === "video" && media.videoUrl)
+        console.log("[v0] Loading videos from both slider and videos collections...")
+        const videoMedia = await getVideos()
 
-        // Transform to video format expected by VideoModal
         const transformedVideos = videoMedia.map((media, index) => ({
           id: media.id,
           title: media.title,
-          thumbnail: media.imageUrl || "/placeholder.svg?height=200&width=300", // Use placeholder if no thumbnail
-          duration: "N/A", // Duration not stored in current schema
-          views: "N/A", // Views not tracked in current schema
+          thumbnail: media.imageUrl || "/placeholder.svg?height=200&width=300",
+          duration: "N/A",
+          views: "N/A",
           description: `${media.medium} by ${media.artist}`,
           medium: media.medium,
           artist: media.artist,
           videoUrl: media.videoUrl,
         }))
 
-        console.log("[v0] Loaded videos:", transformedVideos.length)
+        console.log("[v0] Loaded and transformed videos:", transformedVideos.length)
         setVideos(transformedVideos)
       } catch (error) {
-        console.error("Error loading videos:", error)
+        console.error("[v0] Error loading videos:", error)
       } finally {
         setLoading(false)
       }
@@ -92,14 +91,12 @@ export function VideoGrid() {
                     className="w-full h-48 object-cover transition-transform duration-700 group-hover:scale-110"
                   />
 
-                  {/* Play Button Overlay */}
                   <div className="absolute inset-0 bg-background/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div className="bg-primary text-primary-foreground rounded-full p-4 transform scale-75 group-hover:scale-100 transition-transform duration-300">
                       <Play size={24} className="ml-1" />
                     </div>
                   </div>
 
-                  {/* Duration Badge */}
                   <div className="absolute bottom-2 right-2 bg-background/80 backdrop-blur-sm text-foreground px-2 py-1 rounded text-xs font-medium">
                     {video.duration}
                   </div>
@@ -129,7 +126,6 @@ export function VideoGrid() {
         </div>
       </section>
 
-      {/* Video Modal */}
       <VideoModal video={selectedVideo} isOpen={!!selectedVideo} onClose={() => setSelectedVideo(null)} />
     </>
   )

@@ -126,7 +126,7 @@ export function ArtworkManager({ uploadLimit, currentCount }: ArtworkManagerProp
 
           setUploadProgress((prev) => ({ ...prev, [file.name]: 0 }))
 
-          const uploadedUrl = await uploadFile(file, `${fileType}/${fileName}`)
+          const uploadedUrl = await uploadFile(file, fileType)
 
           setUploadProgress((prev) => ({ ...prev, [file.name]: 50 }))
 

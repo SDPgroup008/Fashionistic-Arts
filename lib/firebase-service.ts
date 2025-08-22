@@ -70,17 +70,20 @@ export async function getArtworks(): Promise<Artwork[]> {
   )
 }
 
-// Get artworks by category
+// Get artworks by category - Fixed to avoid composite index requirement
 export async function getArtworksByCategory(category: "gallery" | "shop"): Promise<Artwork[]> {
-  const q = query(collection(db, COLLECTION_NAME), where("category", "==", category), orderBy("createdAt", "desc"))
+  const q = query(collection(db, COLLECTION_NAME), where("category", "==", category))
   const querySnapshot = await getDocs(q)
-  return querySnapshot.docs.map(
+  const artworks = querySnapshot.docs.map(
     (doc) =>
       ({
         id: doc.id,
         ...doc.data(),
       }) as Artwork,
   )
+
+  // Sort by createdAt in memory to avoid composite index
+  return artworks.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 }
 
 // Update artwork
@@ -163,4 +166,46 @@ export async function deleteSliderImage(id: string): Promise<void> {
 
   // Delete the document
   await deleteDoc(docRef)
+}
+
+// Get videos specifically from slider collection
+export async function getVideos(): Promise<SliderImage[]> {
+  const q = query(collection(db, SLIDER_COLLECTION_NAME), where("fileType", "==", "video"), orderBy("order", "asc"))
+  const querySnapshot = await getDocs(q)
+  return querySnapshot.docs.map(
+    (doc) =>
+      ({
+        id: doc.id,
+        ...doc.data(),
+      }) as SliderImage,
+  )
+}
+
+// Get all media from slider collection (both images and videos)
+export async function getAllSliderMedia(): Promise<SliderImage[]> {
+  try {
+    const q = query(collection(db, SLIDER_COLLECTION_NAME), orderBy("order", "asc"))
+    const querySnapshot = await getDocs(q)
+    return querySnapshot.docs.map(
+      (doc) =>
+        ({
+          id: doc.id,
+          ...doc.data(),
+        }) as SliderImage,
+    )
+  } catch (error) {
+    console.error("Error fetching slider media:", error)
+    // Fallback: try without orderBy if index doesn't exist
+    const q = query(collection(db, SLIDER_COLLECTION_NAME))
+    const querySnapshot = await getDocs(q)
+    const media = querySnapshot.docs.map(
+      (doc) =>
+        ({
+          id: doc.id,
+          ...doc.data(),
+        }) as SliderImage,
+    )
+    // Sort by order in memory
+    return media.sort((a, b) => (a.order || 0) - (b.order || 0))
+  }
 }

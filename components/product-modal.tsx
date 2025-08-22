@@ -75,7 +75,7 @@ export function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
             <p className="text-foreground leading-relaxed">{product.description}</p>
 
             <div className="space-y-4">
-              <div className="text-3xl font-bold text-primary">UGX {product.price?.toLocaleString()}</div>
+              <div className="text-3xl font-bold text-primary">${product.price}</div>
 
               <div className="flex gap-3">
                 <Button
@@ -139,7 +139,8 @@ export function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
               </div>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
-  )\
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
 }

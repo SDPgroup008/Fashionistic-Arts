@@ -33,6 +33,7 @@ export interface SliderImage {
 
 const COLLECTION_NAME = "Fashionistic_Arts"
 const SLIDER_COLLECTION_NAME = "Fashionistic_Arts_Slider"
+const VIDEOS_COLLECTION_NAME = "Fashionistic_Arts_Videos"
 
 // Upload file to Firebase Storage
 export async function uploadFile(file: File, path: string): Promise<string> {
@@ -169,16 +170,82 @@ export async function deleteSliderImage(id: string): Promise<void> {
 }
 
 // Get videos specifically from slider collection
+export async function getVideosFromCollection(): Promise<SliderImage[]> {
+  try {
+    console.log("[v0] Fetching videos from /Fashionistic_Arts/videos collection...")
+    const q = query(collection(db, VIDEOS_COLLECTION_NAME), orderBy("createdAt", "desc"))
+    const querySnapshot = await getDocs(q)
+    const videos = querySnapshot.docs.map(
+      (doc) =>
+        ({
+          id: doc.id,
+          ...doc.data(),
+        }) as SliderImage,
+    )
+    console.log("[v0] Found videos in videos collection:", videos.length)
+    return videos
+  } catch (error) {
+    console.error("[v0] Error fetching videos from collection:", error)
+    // Fallback: try without orderBy if index doesn't exist
+    try {
+      const q = query(collection(db, VIDEOS_COLLECTION_NAME))
+      const querySnapshot = await getDocs(q)
+      const videos = querySnapshot.docs.map(
+        (doc) =>
+          ({
+            id: doc.id,
+            ...doc.data(),
+          }) as SliderImage,
+      )
+      // Sort by createdAt in memory
+      return videos.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    } catch (fallbackError) {
+      console.error("[v0] Fallback video fetch also failed:", fallbackError)
+      return []
+    }
+  }
+}
+
+export async function addVideoToCollection(
+  videoData: Omit<SliderImage, "id" | "createdAt" | "updatedAt" | "videoUrl">,
+  file: File,
+): Promise<string> {
+  // Upload video file
+  const videoUrl = await uploadFile(file, `videos/${Date.now()}_${file.name}`)
+
+  // Create the data object
+  const dataToSave = {
+    ...videoData,
+    fileType: "video" as const,
+    videoUrl,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  }
+
+  // Add to Firestore videos collection
+  const docRef = await addDoc(collection(db, VIDEOS_COLLECTION_NAME), dataToSave)
+  console.log("[v0] Added video to videos collection:", docRef.id)
+  return docRef.id
+}
+
 export async function getVideos(): Promise<SliderImage[]> {
-  const q = query(collection(db, SLIDER_COLLECTION_NAME), where("fileType", "==", "video"), orderBy("order", "asc"))
-  const querySnapshot = await getDocs(q)
-  return querySnapshot.docs.map(
-    (doc) =>
-      ({
-        id: doc.id,
-        ...doc.data(),
-      }) as SliderImage,
-  )
+  try {
+    // Get videos from both slider collection and dedicated videos collection
+    const [sliderVideos, collectionVideos] = await Promise.all([
+      getAllSliderMedia().then((media) => media.filter((item) => item.fileType === "video")),
+      getVideosFromCollection(),
+    ])
+
+    // Combine and deduplicate videos
+    const allVideos = [...sliderVideos, ...collectionVideos]
+    const uniqueVideos = allVideos.filter((video, index, self) => index === self.findIndex((v) => v.id === video.id))
+
+    console.log("[v0] Total unique videos found:", uniqueVideos.length)
+    return uniqueVideos.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+  } catch (error) {
+    console.error("[v0] Error getting videos:", error)
+    return []
+  }
 }
 
 // Get all media from slider collection (both images and videos)

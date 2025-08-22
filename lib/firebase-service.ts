@@ -23,7 +23,9 @@ export interface SliderImage {
   title: string
   artist: string
   medium: string
-  imageUrl: string
+  imageUrl?: string
+  videoUrl?: string
+  fileType: "image" | "video"
   order: number
   createdAt: Date
   updatedAt: Date
@@ -117,36 +119,44 @@ export async function getSliderImages(): Promise<SliderImage[]> {
 
 // Add slider image
 export async function addSliderImage(
-  sliderData: Omit<SliderImage, "id" | "createdAt" | "updatedAt" | "imageUrl">,
+  sliderData: Omit<SliderImage, "id" | "createdAt" | "updatedAt" | "imageUrl" | "videoUrl">,
   file: File,
 ): Promise<string> {
-  // Upload image file
-  const imageUrl = await uploadFile(file, `slider/${Date.now()}_${file.name}`)
+  // Determine file type
+  const fileType = file.type.startsWith("image/") ? "image" : "video"
 
-  // Add to Firestore
-  const docRef = await addDoc(collection(db, SLIDER_COLLECTION_NAME), {
+  // Upload file
+  const fileUrl = await uploadFile(file, `slider/${Date.now()}_${file.name}`)
+
+  // Create the data object with proper field names
+  const dataToSave = {
     ...sliderData,
-    imageUrl,
+    fileType,
+    ...(fileType === "image" ? { imageUrl: fileUrl } : { videoUrl: fileUrl }),
     createdAt: new Date(),
     updatedAt: new Date(),
-  })
+  }
+
+  // Add to Firestore
+  const docRef = await addDoc(collection(db, SLIDER_COLLECTION_NAME), dataToSave)
   return docRef.id
 }
 
 // Delete slider image
 export async function deleteSliderImage(id: string): Promise<void> {
-  // Get the document to retrieve the image URL
+  // Get the document to retrieve the file URL
   const docRef = doc(db, SLIDER_COLLECTION_NAME, id)
   const docSnap = await getDocs(query(collection(db, SLIDER_COLLECTION_NAME), where("__name__", "==", id)))
 
   if (!docSnap.empty) {
     const data = docSnap.docs[0].data() as SliderImage
-    if (data.imageUrl) {
-      // Delete the image from storage
+    const fileUrl = data.imageUrl || data.videoUrl
+    if (fileUrl) {
+      // Delete the file from storage
       try {
-        await deleteFile(data.imageUrl)
+        await deleteFile(fileUrl)
       } catch (error) {
-        console.warn("Failed to delete image from storage:", error)
+        console.warn("Failed to delete file from storage:", error)
       }
     }
   }

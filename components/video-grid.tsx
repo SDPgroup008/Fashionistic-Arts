@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Play, Eye } from "lucide-react"
 import { VideoModal } from "@/components/video-modal"
-import { getArtworks } from "@/lib/firebase-service"
+import { getAllSliderMedia } from "@/lib/firebase-service"
 
 export function VideoGrid() {
   const [selectedVideo, setSelectedVideo] = useState<any>(null)
@@ -15,23 +15,23 @@ export function VideoGrid() {
   useEffect(() => {
     const loadVideos = async () => {
       try {
-        const allArtworks = await getArtworks()
-        // Filter artworks that have video URLs
-        const videoArtworks = allArtworks.filter((artwork) => artwork.videoUrl)
+        const sliderMedia = await getAllSliderMedia()
+        const videoMedia = sliderMedia.filter((media) => media.fileType === "video" && media.videoUrl)
 
         // Transform to video format expected by VideoModal
-        const transformedVideos = videoArtworks.map((artwork, index) => ({
-          id: Number.parseInt(artwork.id || "0"),
-          title: artwork.title,
-          thumbnail: artwork.imageUrl, // Use image as thumbnail
+        const transformedVideos = videoMedia.map((media, index) => ({
+          id: media.id,
+          title: media.title,
+          thumbnail: media.imageUrl || "/placeholder.svg?height=200&width=300", // Use placeholder if no thumbnail
           duration: "N/A", // Duration not stored in current schema
           views: "N/A", // Views not tracked in current schema
-          description: artwork.description,
-          medium: artwork.medium,
-          surface: artwork.material,
-          videoUrl: artwork.videoUrl,
+          description: `${media.medium} by ${media.artist}`,
+          medium: media.medium,
+          artist: media.artist,
+          videoUrl: media.videoUrl,
         }))
 
+        console.log("[v0] Loaded videos:", transformedVideos.length)
         setVideos(transformedVideos)
       } catch (error) {
         console.error("Error loading videos:", error)

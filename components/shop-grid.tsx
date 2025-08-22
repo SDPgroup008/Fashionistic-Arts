@@ -1,110 +1,97 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ProductCard } from "@/components/product-card"
 import { ProductModal } from "@/components/product-modal"
-
-// Sample shop products
-const products = [
-  {
-    id: 1,
-    title: "Golden Depths",
-    image: "/placeholder.svg?height=600&width=400",
-    medium: "Acrylic",
-    surface: "Canvas",
-    size: "24x36 inches",
-    description:
-      "A mesmerizing exploration of golden hues and abstract forms that evoke the depths of human emotion and the richness of artistic expression.",
-    price: 1200,
-    year: 2024,
-    available: true,
-    featured: true,
-  },
-  {
-    id: 2,
-    title: "Neon Dreams",
-    image: "/placeholder.svg?height=800&width=600",
-    medium: "Digital",
-    surface: "Metal",
-    size: "30x40 inches",
-    description:
-      "A futuristic digital masterpiece that captures the essence of modern urban life through vibrant neon colors and dynamic compositions.",
-    price: 800,
-    year: 2024,
-    available: true,
-    featured: true,
-  },
-  {
-    id: 3,
-    title: "Midnight Elegance",
-    image: "/placeholder.svg?height=500&width=700",
-    medium: "Mixed Media",
-    surface: "Wood",
-    size: "18x24 inches",
-    description:
-      "An elegant composition that plays with light and shadow, creating a sophisticated piece that speaks to the beauty found in darkness.",
-    price: 950,
-    year: 2023,
-    available: true,
-    featured: false,
-  },
-  {
-    id: 4,
-    title: "Crimson Passion",
-    image: "/placeholder.svg?height=700&width=500",
-    medium: "Oil",
-    surface: "Canvas",
-    size: "20x30 inches",
-    description:
-      "A bold expression of passion and intensity, this oil painting captures the raw emotion and energy of the human spirit.",
-    price: 1400,
-    year: 2024,
-    available: false,
-    featured: true,
-  },
-  {
-    id: 5,
-    title: "Serene Waters",
-    image: "/placeholder.svg?height=600&width=800",
-    medium: "Watercolor",
-    surface: "Paper",
-    size: "16x20 inches",
-    description:
-      "A tranquil watercolor piece that invites viewers to find peace and serenity in the gentle flow of water and soft color transitions.",
-    price: 650,
-    year: 2023,
-    available: true,
-    featured: false,
-  },
-  {
-    id: 6,
-    title: "Urban Shadows",
-    image: "/placeholder.svg?height=900&width=600",
-    medium: "Charcoal",
-    surface: "Paper",
-    size: "22x28 inches",
-    description:
-      "A dramatic charcoal drawing that captures the essence of urban life through bold contrasts and expressive line work.",
-    price: 750,
-    year: 2024,
-    available: true,
-    featured: false,
-  },
-]
+import { getArtworksByCategory } from "@/lib/firebase-service"
+import type { Artwork } from "@/lib/firebase-service"
 
 export function ShopGrid() {
-  const [selectedProduct, setSelectedProduct] = useState<(typeof products)[0] | null>(null)
+  const [selectedProduct, setSelectedProduct] = useState<any | null>(null)
+  const [shopItems, setShopItems] = useState<Artwork[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const loadShopItems = async () => {
+      try {
+        console.log("[v0] Loading shop items...")
+        const items = await getArtworksByCategory("shop")
+        console.log("[v0] Loaded shop items:", items.length, items)
+        setShopItems(items)
+      } catch (error) {
+        console.error("Error loading shop items:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadShopItems()
+  }, [])
+
+  if (loading) {
+    return (
+      <section className="px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-center py-16">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Loading shop items...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (shopItems.length === 0) {
+    return (
+      <section className="px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center py-16">
+            <h3 className="text-2xl font-serif font-bold text-foreground mb-4">No Shop Items Yet</h3>
+            <p className="text-muted-foreground">Shop items will appear here once uploaded with "shop" category.</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <>
       <section className="px-4 sm:px-6 lg:px-8 pb-16">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map((product, index) => (
+            {shopItems.map((item, index) => (
               <ProductCard
-                key={product.id}
-                product={product}
-                onClick={() => setSelectedProduct(product)}
+                key={item.id}
+                product={{
+                  id: Number.parseInt(item.id || "0"),
+                  title: item.title,
+                  image: item.imageUrl,
+                  medium: item.medium,
+                  surface: item.material,
+                  size: item.size,
+                  description: item.description,
+                  price: item.price || 0,
+                  year: new Date(item.createdAt).getFullYear(),
+                  available: item.isForSale,
+                  featured: false, // Can be enhanced later with featured field
+                }}
+                onClick={() =>
+                  setSelectedProduct({
+                    id: Number.parseInt(item.id || "0"),
+                    title: item.title,
+                    image: item.imageUrl,
+                    medium: item.medium,
+                    surface: item.material,
+                    size: item.size,
+                    description: item.description,
+                    price: item.price || 0,
+                    year: new Date(item.createdAt).getFullYear(),
+                    available: item.isForSale,
+                    featured: false,
+                  })
+                }
                 className="animate-fade-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
               />

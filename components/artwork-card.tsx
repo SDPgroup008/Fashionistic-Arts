@@ -91,7 +91,7 @@ export function ArtworkCard({ artwork, onClick, className, style }: ArtworkCardP
         <p className="text-sm text-muted-foreground mb-2 line-clamp-2">{artwork.description}</p>
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>{artwork.size}</span>
-          <span className="font-semibold text-primary">${artwork.price}</span>
+          <span className="font-semibold text-primary">UGX {artwork.price?.toLocaleString()}</span>
         </div>
       </CardContent>
     </Card>

@@ -3,18 +3,8 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight, Play } from "lucide-react"
-import { getSliderImages } from "@/lib/firebase-service"
-
-interface SliderImage {
-  id: string
-  imageUrl?: string
-  videoUrl?: string
-  title: string
-  artist: string
-  medium: string
-  fileType: "image" | "video"
-  order: number
-}
+import { getAllSliderMedia } from "@/lib/firebase-service"
+import type { SliderImage } from "@/lib/firebase-service"
 
 const heroArtworks = [
   {
@@ -23,7 +13,7 @@ const heroArtworks = [
     title: "Golden Depths",
     artist: "Fashionistic Arts",
     medium: "Acrylic on Canvas",
-    fileType: "image",
+    fileType: "image" as const,
     order: 1,
   },
   {
@@ -32,7 +22,7 @@ const heroArtworks = [
     title: "Neon Dreams",
     artist: "Fashionistic Arts",
     medium: "Digital Art",
-    fileType: "image",
+    fileType: "image" as const,
     order: 2,
   },
   {
@@ -41,7 +31,7 @@ const heroArtworks = [
     title: "Midnight Elegance",
     artist: "Fashionistic Arts",
     medium: "Mixed Media",
-    fileType: "image",
+    fileType: "image" as const,
     order: 3,
   },
 ]
@@ -55,15 +45,19 @@ export function HeroSection() {
   useEffect(() => {
     const loadSliderImages = async () => {
       try {
-        const images = await getSliderImages()
+        const images = await getAllSliderMedia()
+        console.log("[v0] Loaded slider media:", images.length, images)
+
         if (images.length > 0) {
           const typedImages = images.map((img) => ({
             ...img,
             fileType: img.fileType as "image" | "video",
           }))
           setSliderImages(typedImages)
+          console.log("[v0] Set slider images:", typedImages)
         } else {
           // Fallback to default images if none in Firebase
+          console.log("[v0] No slider images found, using fallback")
           setSliderImages(heroArtworks)
         }
       } catch (error) {

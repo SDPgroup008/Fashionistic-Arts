@@ -6,7 +6,7 @@ import { ChevronLeft, ChevronRight, Play } from "lucide-react"
 import { getAllSliderMedia } from "@/lib/firebase-service"
 import type { SliderImage } from "@/lib/firebase-service"
 
-const heroArtworks = [
+const heroArtworks: SliderImage[] = [
   {
     id: "default-1",
     imageUrl: "/placeholder.svg?height=1080&width=1920",
@@ -15,6 +15,8 @@ const heroArtworks = [
     medium: "Acrylic on Canvas",
     fileType: "image" as const,
     order: 1,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
   {
     id: "default-2",
@@ -24,6 +26,8 @@ const heroArtworks = [
     medium: "Digital Art",
     fileType: "image" as const,
     order: 2,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
   {
     id: "default-3",
@@ -33,6 +37,8 @@ const heroArtworks = [
     medium: "Mixed Media",
     fileType: "image" as const,
     order: 3,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
 ]
 
@@ -45,23 +51,32 @@ export function HeroSection() {
   useEffect(() => {
     const loadSliderImages = async () => {
       try {
+        console.log("[v0] Loading slider media from /Fashionistic_Arts/slider collection...")
         const images = await getAllSliderMedia()
         console.log("[v0] Loaded slider media:", images.length, images)
 
         if (images.length > 0) {
-          const typedImages = images.map((img) => ({
-            ...img,
+          const typedImages: SliderImage[] = images.map((img) => ({
+            id: img.id,
+            title: img.title,
+            artist: img.artist,
+            medium: img.medium,
+            imageUrl: img.imageUrl,
+            videoUrl: img.videoUrl,
             fileType: img.fileType as "image" | "video",
+            order: img.order,
+            createdAt: img.createdAt || new Date(),
+            updatedAt: img.updatedAt || new Date(),
           }))
           setSliderImages(typedImages)
-          console.log("[v0] Set slider images:", typedImages)
+          console.log("[v0] Set slider images from Firebase:", typedImages)
         } else {
           // Fallback to default images if none in Firebase
-          console.log("[v0] No slider images found, using fallback")
+          console.log("[v0] No slider images found in Firebase, using fallback")
           setSliderImages(heroArtworks)
         }
       } catch (error) {
-        console.error("Error loading slider images:", error)
+        console.error("[v0] Error loading slider images:", error)
         // Use fallback images on error
         setSliderImages(heroArtworks)
       } finally {

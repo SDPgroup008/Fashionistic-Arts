@@ -7,10 +7,12 @@ import { getSliderImages } from "@/lib/firebase-service"
 
 interface SliderImage {
   id: string
-  imageUrl: string
+  imageUrl?: string
+  videoUrl?: string
   title: string
   artist: string
   medium: string
+  fileType: "image" | "video"
   order: number
 }
 
@@ -21,6 +23,7 @@ const heroArtworks = [
     title: "Golden Depths",
     artist: "Fashionistic Arts",
     medium: "Acrylic on Canvas",
+    fileType: "image",
     order: 1,
   },
   {
@@ -29,6 +32,7 @@ const heroArtworks = [
     title: "Neon Dreams",
     artist: "Fashionistic Arts",
     medium: "Digital Art",
+    fileType: "image",
     order: 2,
   },
   {
@@ -37,6 +41,7 @@ const heroArtworks = [
     title: "Midnight Elegance",
     artist: "Fashionistic Arts",
     medium: "Mixed Media",
+    fileType: "image",
     order: 3,
   },
 ]
@@ -124,13 +129,26 @@ export function HeroSection() {
               index === currentSlide ? "opacity-100" : "opacity-0"
             }`}
           >
-            <div
-              className="w-full h-full bg-cover bg-center parallax"
-              style={{
-                backgroundImage: `url(${artwork.imageUrl})`,
-                transform: `translateY(${index === currentSlide ? 0 : 20}px)`,
-              }}
-            />
+            {artwork.fileType === "video" ? (
+              <video
+                src={artwork.videoUrl}
+                className="w-full h-full object-cover parallax"
+                autoPlay
+                muted
+                loop
+                style={{
+                  transform: `translateY(${index === currentSlide ? 0 : 20}px)`,
+                }}
+              />
+            ) : (
+              <div
+                className="w-full h-full bg-cover bg-center parallax"
+                style={{
+                  backgroundImage: `url(${artwork.imageUrl})`,
+                  transform: `translateY(${index === currentSlide ? 0 : 20}px)`,
+                }}
+              />
+            )}
             <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/40 to-transparent" />
           </div>
         ))}

@@ -21,7 +21,7 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [totalArtworks] = useState(12) // Mock data
   const [totalSales] = useState(8)
   const [totalRevenue] = useState(9850)
-  const [uploadLimit] = useState(15)
+  const [uploadLimit] = useState(600)
 
   return (
     <div className="min-h-screen bg-background">

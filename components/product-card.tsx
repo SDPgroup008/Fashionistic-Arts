@@ -107,7 +107,7 @@ export function ProductCard({ product, onClick, className, style }: ProductCardP
         <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{product.description}</p>
         <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
           <span>{product.size}</span>
-          <span className="text-lg font-bold text-primary">${product.price}</span>
+          <span className="text-lg font-bold text-primary">UGX {product.price?.toLocaleString()}</span>
         </div>
 
         <Button

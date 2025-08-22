@@ -1,60 +1,77 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Play, Eye } from "lucide-react"
 import { VideoModal } from "@/components/video-modal"
-
-const videos = [
-  {
-    id: 1,
-    title: "Creating Golden Depths - Time Lapse",
-    thumbnail: "/placeholder.svg?height=400&width=600",
-    duration: "5:32",
-    views: "2.1K",
-    description: "Watch the creation of 'Golden Depths' from start to finish in this mesmerizing time-lapse video.",
-    medium: "Acrylic",
-    surface: "Canvas",
-    videoUrl: "https://example.com/video1.mp4",
-  },
-  {
-    id: 2,
-    title: "Digital Art Process - Neon Dreams",
-    thumbnail: "/placeholder.svg?height=400&width=600",
-    duration: "8:15",
-    views: "3.5K",
-    description: "Explore the digital creation process behind the futuristic artwork 'Neon Dreams'.",
-    medium: "Digital",
-    surface: "Digital",
-    videoUrl: "https://example.com/video2.mp4",
-  },
-  {
-    id: 3,
-    title: "Mixed Media Techniques Tutorial",
-    thumbnail: "/placeholder.svg?height=400&width=600",
-    duration: "12:45",
-    views: "5.2K",
-    description: "Learn advanced mixed media techniques used in creating contemporary artworks.",
-    medium: "Mixed Media",
-    surface: "Wood",
-    videoUrl: "https://example.com/video3.mp4",
-  },
-  {
-    id: 4,
-    title: "Oil Painting Masterclass",
-    thumbnail: "/placeholder.svg?height=400&width=600",
-    duration: "15:20",
-    views: "4.8K",
-    description: "A comprehensive masterclass on oil painting techniques and color theory.",
-    medium: "Oil",
-    surface: "Canvas",
-    videoUrl: "https://example.com/video4.mp4",
-  },
-]
+import { getArtworks } from "@/lib/firebase-service"
 
 export function VideoGrid() {
-  const [selectedVideo, setSelectedVideo] = useState<(typeof videos)[0] | null>(null)
+  const [selectedVideo, setSelectedVideo] = useState<any>(null)
+  const [videos, setVideos] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const loadVideos = async () => {
+      try {
+        const allArtworks = await getArtworks()
+        // Filter artworks that have video URLs
+        const videoArtworks = allArtworks.filter((artwork) => artwork.videoUrl)
+
+        // Transform to video format expected by VideoModal
+        const transformedVideos = videoArtworks.map((artwork, index) => ({
+          id: Number.parseInt(artwork.id || "0"),
+          title: artwork.title,
+          thumbnail: artwork.imageUrl, // Use image as thumbnail
+          duration: "N/A", // Duration not stored in current schema
+          views: "N/A", // Views not tracked in current schema
+          description: artwork.description,
+          medium: artwork.medium,
+          surface: artwork.material,
+          videoUrl: artwork.videoUrl,
+        }))
+
+        setVideos(transformedVideos)
+      } catch (error) {
+        console.error("Error loading videos:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadVideos()
+  }, [])
+
+  if (loading) {
+    return (
+      <section className="px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-center py-16">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Loading videos...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (videos.length === 0) {
+    return (
+      <section className="px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center py-16">
+            <h3 className="text-2xl font-serif font-bold text-foreground mb-4">No Videos Yet</h3>
+            <p className="text-muted-foreground">
+              Video content will appear here once uploaded through the admin dashboard.
+            </p>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <>

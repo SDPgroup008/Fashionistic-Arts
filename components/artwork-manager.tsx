@@ -102,9 +102,9 @@ export function ArtworkManager({ uploadLimit, currentCount }: ArtworkManagerProp
           size: formData.size,
           material: formData.material,
           medium: formData.medium,
-          price: formData.price ? Number(formData.price) : undefined,
+          price: formData.price ? Number(formData.price) : null,
           imageUrl: imageUrl || artworks.find((a) => a.id === editingId)?.imageUrl || "",
-          videoUrl: videoUrl || artworks.find((a) => a.id === editingId)?.videoUrl,
+          videoUrl: videoUrl || artworks.find((a) => a.id === editingId)?.videoUrl || null,
           isForSale: formData.isForSale,
           category: formData.category,
         }
@@ -127,9 +127,9 @@ export function ArtworkManager({ uploadLimit, currentCount }: ArtworkManagerProp
             size: formData.size || "Unknown",
             material: formData.material || "Unknown",
             medium: formData.medium || "Unknown",
-            price: formData.price ? Number(formData.price) : undefined,
+            price: formData.price ? Number(formData.price) : null,
             imageUrl: fileType === "images" ? uploadedUrl : "",
-            videoUrl: fileType === "videos" ? uploadedUrl : undefined,
+            videoUrl: fileType === "videos" ? uploadedUrl : null,
             isForSale: formData.isForSale,
             category: formData.category,
           }
@@ -328,12 +328,12 @@ export function ArtworkManager({ uploadLimit, currentCount }: ArtworkManagerProp
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="price">Price ($) - Optional</Label>
+                  <Label htmlFor="price">Price (UGX) - Optional</Label>
                   <Input
                     id="price"
                     type="number"
                     min="0"
-                    step="0.01"
+                    step="1"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                   />
@@ -496,7 +496,7 @@ export function ArtworkManager({ uploadLimit, currentCount }: ArtworkManagerProp
                   {artwork.medium} on {artwork.material}
                 </p>
                 <p>{artwork.size}</p>
-                {artwork.price && <p className="font-semibold text-primary">${artwork.price}</p>}
+                {artwork.price && <p className="font-semibold text-primary">UGX {artwork.price?.toLocaleString()}</p>}
                 {artwork.isForSale && (
                   <Badge variant="secondary" className="text-xs">
                     For Sale

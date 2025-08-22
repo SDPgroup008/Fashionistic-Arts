@@ -32,7 +32,7 @@ export interface SliderImage {
 }
 
 const COLLECTION_NAME = "Fashionistic_Arts"
-const SLIDER_COLLECTION_NAME = "Fashionistic_Arts/slider"
+const SLIDER_COLLECTION_NAME = "Fashionistic_Arts"
 const VIDEOS_COLLECTION_NAME = "Fashionistic_Arts/videos"
 
 // Upload file to Firebase Storage

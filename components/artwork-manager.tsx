@@ -233,7 +233,7 @@ export function ArtworkManager({ uploadLimit, currentCount }: ArtworkManagerProp
     }
 
     if (files.length > 500) {
-      alert("You can upload a maximum of 15 files at once.")
+      alert("You can upload a maximum of  files at once.")
       return
     }
 

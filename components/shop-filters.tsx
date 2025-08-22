@@ -111,7 +111,7 @@ export function ShopFilters() {
               {/* Price Range */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground">
-                  Price Range: ${priceRange[0]} - ${priceRange[1]}
+                  Price Range: UGX {priceRange[0].toLocaleString()} - UGX {priceRange[1].toLocaleString()}
                 </label>
                 <Slider
                   value={priceRange}
@@ -166,7 +166,7 @@ export function ShopFilters() {
                   )}
                   {(priceRange[0] !== 0 || priceRange[1] !== 2000) && (
                     <Badge variant="secondary" className="gap-1">
-                      ${priceRange[0]} - ${priceRange[1]}
+                      UGX {priceRange[0].toLocaleString()} - UGX {priceRange[1].toLocaleString()}
                       <X size={12} className="cursor-pointer" onClick={() => setPriceRange([0, 2000])} />
                     </Badge>
                   )}

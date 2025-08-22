@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { LogOut, ImageIcon, Video, ShoppingCart, BarChart3, Home, FileSlidersIcon as Slideshow } from "lucide-react"
+import { LogOut, ImageIcon, Video, ShoppingCart, BarChart3, Home, SlidersIcon as Slideshow } from "lucide-react"
 import { ArtworkManager } from "@/components/artwork-manager"
 import { ShopManager } from "@/components/shop-manager"
 import { AnalyticsDashboard } from "@/components/analytics-dashboard"
 import { SliderManager } from "@/components/slider-manager"
+import { VideoManager } from "@/components/video-manager"
 
 interface AdminDashboardProps {
   onLogout: () => void
@@ -85,7 +86,7 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
               <BarChart3 size={16} className="text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">${totalRevenue}</div>
+              <div className="text-2xl font-bold text-primary">UGX {totalRevenue.toLocaleString()}</div>
               <p className="text-xs text-muted-foreground">Total earnings</p>
             </CardContent>
           </Card>
@@ -110,10 +111,14 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="artworks" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:grid-cols-5">
             <TabsTrigger value="artworks" className="gap-2">
               <ImageIcon size={16} />
               Artworks
+            </TabsTrigger>
+            <TabsTrigger value="videos" className="gap-2">
+              <Video size={16} />
+              Videos
             </TabsTrigger>
             <TabsTrigger value="slider" className="gap-2">
               <Slideshow size={16} />
@@ -131,6 +136,10 @@ export function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
           <TabsContent value="artworks">
             <ArtworkManager uploadLimit={uploadLimit} currentCount={totalArtworks} />
+          </TabsContent>
+
+          <TabsContent value="videos">
+            <VideoManager />
           </TabsContent>
 
           <TabsContent value="slider">

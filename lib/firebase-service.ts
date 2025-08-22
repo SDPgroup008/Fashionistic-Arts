@@ -32,8 +32,8 @@ export interface SliderImage {
 }
 
 const COLLECTION_NAME = "Fashionistic_Arts"
-const SLIDER_COLLECTION_NAME = "Fashionistic_Arts_Slider"
-const VIDEOS_COLLECTION_NAME = "Fashionistic_Arts_Videos"
+const SLIDER_COLLECTION_NAME = "Fashionistic_Arts/slider"
+const VIDEOS_COLLECTION_NAME = "Fashionistic_Arts/videos"
 
 // Upload file to Firebase Storage
 export async function uploadFile(file: File, path: string): Promise<string> {

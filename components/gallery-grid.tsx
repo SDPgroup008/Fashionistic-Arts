@@ -71,10 +71,7 @@ export function GalleryGrid() {
     setFilteredArtworks(filtered)
   }
 
-  useEffect(() => {
-    // Make the filter function available to the parent GalleryFilters component
-    window.galleryFiltersHandler = handleFiltersChange
-  }, [artworks])
+
 
   if (loading) {
     return (

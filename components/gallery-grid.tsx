@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { ArtworkCard } from "@/components/artwork-card"
 import { ArtworkModal } from "@/components/artwork-modal"
-import { GalleryFilters } from "@/components/gallery-filters"
 import { getArtworksByCategory } from "@/lib/firebase-service"
 import type { Artwork } from "@/lib/firebase-service"
 
@@ -72,43 +71,41 @@ export function GalleryGrid() {
     setFilteredArtworks(filtered)
   }
 
+  useEffect(() => {
+    // Make the filter function available to the parent GalleryFilters component
+    window.galleryFiltersHandler = handleFiltersChange
+  }, [artworks])
+
   if (loading) {
     return (
-      <>
-        <GalleryFilters onFiltersChange={handleFiltersChange} />
-        <section className="px-4 sm:px-6 lg:px-8 pb-16">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-center py-16">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-                <p className="text-muted-foreground">Loading gallery...</p>
-              </div>
+      <section className="px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-center py-16">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Loading gallery...</p>
             </div>
           </div>
-        </section>
-      </>
+        </div>
+      </section>
     )
   }
 
   if (artworks.length === 0) {
     return (
-      <>
-        <GalleryFilters onFiltersChange={handleFiltersChange} />
-        <section className="px-4 sm:px-6 lg:px-8 pb-16">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center py-16">
-              <h3 className="text-2xl font-serif font-bold text-foreground mb-4">No Artworks Yet</h3>
-              <p className="text-muted-foreground">Gallery artworks will appear here once uploaded.</p>
-            </div>
+      <section className="px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center py-16">
+            <h3 className="text-2xl font-serif font-bold text-foreground mb-4">No Artworks Yet</h3>
+            <p className="text-muted-foreground">Gallery artworks will appear here once uploaded.</p>
           </div>
-        </section>
-      </>
+        </div>
+      </section>
     )
   }
 
   return (
     <>
-      <GalleryFilters onFiltersChange={handleFiltersChange} />
       <section className="px-4 sm:px-6 lg:px-8 pb-16">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

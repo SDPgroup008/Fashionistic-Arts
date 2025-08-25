@@ -10,16 +10,50 @@ const mediums = ["All", "Acrylic", "Oil", "Watercolor", "Charcoal", "Digital", "
 const surfaces = ["All", "Canvas", "Paper", "Wood", "Metal", "Glass", "Fabric"]
 const sortOptions = ["Newest", "Oldest", "Title A-Z", "Title Z-A", "Price Low-High", "Price High-Low"]
 
-export function GalleryFilters() {
+interface GalleryFiltersProps {
+  onFiltersChange?: (filters: {
+    medium: string
+    surface: string
+    sortBy: string
+  }) => void
+}
+
+export function GalleryFilters({ onFiltersChange }: GalleryFiltersProps) {
   const [selectedMedium, setSelectedMedium] = useState("All")
   const [selectedSurface, setSelectedSurface] = useState("All")
   const [sortBy, setSortBy] = useState("Newest")
   const [showFilters, setShowFilters] = useState(false)
 
+  const handleFilterChange = (medium: string, surface: string, sort: string) => {
+    if (onFiltersChange) {
+      onFiltersChange({
+        medium,
+        surface,
+        sortBy: sort,
+      })
+    }
+  }
+
+  const handleMediumChange = (value: string) => {
+    setSelectedMedium(value)
+    handleFilterChange(value, selectedSurface, sortBy)
+  }
+
+  const handleSurfaceChange = (value: string) => {
+    setSelectedSurface(value)
+    handleFilterChange(selectedMedium, value, sortBy)
+  }
+
+  const handleSortChange = (value: string) => {
+    setSortBy(value)
+    handleFilterChange(selectedMedium, selectedSurface, value)
+  }
+
   const clearFilters = () => {
     setSelectedMedium("All")
     setSelectedSurface("All")
     setSortBy("Newest")
+    handleFilterChange("All", "All", "Newest")
   }
 
   const hasActiveFilters = selectedMedium !== "All" || selectedSurface !== "All" || sortBy !== "Newest"
@@ -47,7 +81,7 @@ export function GalleryFilters() {
               <div className="flex flex-col sm:flex-row gap-4 flex-1">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">Medium</label>
-                  <Select value={selectedMedium} onValueChange={setSelectedMedium}>
+                  <Select value={selectedMedium} onValueChange={handleMediumChange}>
                     <SelectTrigger className="w-full sm:w-40">
                       <SelectValue />
                     </SelectTrigger>
@@ -63,7 +97,7 @@ export function GalleryFilters() {
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">Surface</label>
-                  <Select value={selectedSurface} onValueChange={setSelectedSurface}>
+                  <Select value={selectedSurface} onValueChange={handleSurfaceChange}>
                     <SelectTrigger className="w-full sm:w-40">
                       <SelectValue />
                     </SelectTrigger>
@@ -79,7 +113,7 @@ export function GalleryFilters() {
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">Sort By</label>
-                  <Select value={sortBy} onValueChange={setSortBy}>
+                  <Select value={sortBy} onValueChange={handleSortChange}>
                     <SelectTrigger className="w-full sm:w-40">
                       <SelectValue />
                     </SelectTrigger>
@@ -113,19 +147,19 @@ export function GalleryFilters() {
                 {selectedMedium !== "All" && (
                   <Badge variant="secondary" className="gap-1">
                     Medium: {selectedMedium}
-                    <X size={12} className="cursor-pointer" onClick={() => setSelectedMedium("All")} />
+                    <X size={12} className="cursor-pointer" onClick={() => handleMediumChange("All")} />
                   </Badge>
                 )}
                 {selectedSurface !== "All" && (
                   <Badge variant="secondary" className="gap-1">
                     Surface: {selectedSurface}
-                    <X size={12} className="cursor-pointer" onClick={() => setSelectedSurface("All")} />
+                    <X size={12} className="cursor-pointer" onClick={() => handleSurfaceChange("All")} />
                   </Badge>
                 )}
                 {sortBy !== "Newest" && (
                   <Badge variant="secondary" className="gap-1">
                     Sort: {sortBy}
-                    <X size={12} className="cursor-pointer" onClick={() => setSortBy("Newest")} />
+                    <X size={12} className="cursor-pointer" onClick={() => handleSortChange("Newest")} />
                   </Badge>
                 )}
               </div>

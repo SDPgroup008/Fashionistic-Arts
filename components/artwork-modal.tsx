@@ -3,7 +3,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Heart, Share2, ShoppingCart } from "lucide-react"
+import { Heart, Share2 } from "lucide-react"
 import { useState } from "react"
 
 interface ArtworkModalProps {
@@ -63,17 +63,13 @@ export function ArtworkModal({ artwork, isOpen, onClose }: ArtworkModalProps) {
               <div className="text-3xl font-bold text-primary">UGX {artwork.price?.toLocaleString()}</div>
 
               <div className="flex gap-3">
-                <Button className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90">
-                  <ShoppingCart size={16} className="mr-2" />
-                  Add to Cart
-                </Button>
                 <Button
                   variant="outline"
-                  size="icon"
                   onClick={() => setIsLiked(!isLiked)}
-                  className={isLiked ? "text-primary border-primary" : ""}
+                  className={`flex-1 ${isLiked ? "text-primary border-primary" : ""}`}
                 >
-                  <Heart size={16} className={isLiked ? "fill-current" : ""} />
+                  <Heart size={16} className={`mr-2 ${isLiked ? "fill-current" : ""}`} />
+                  {isLiked ? "Liked" : "Like"}
                 </Button>
                 <Button variant="outline" size="icon">
                   <Share2 size={16} />
